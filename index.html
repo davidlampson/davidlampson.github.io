@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,6 +30,7 @@
             border-radius: 16px;
             margin-bottom: 2rem;
             box-shadow: 0 8px 32px rgba(230, 57, 70, 0.3);
+            object-fit: cover;
         }
         h1 {
             font-size: clamp(2rem, 6vw, 4rem);
@@ -59,7 +59,6 @@
             flex-wrap: wrap;
             gap: 1rem;
             justify-content: center;
-            margin-bottom: 3rem;
         }
         .listen-links a {
             display: inline-block;
@@ -76,44 +75,6 @@
             background: #e63946;
             color: #0a0a0a;
         }
-        .latest {
-            max-width: 550px;
-            border-top: 1px solid #222;
-            padding-top: 2rem;
-        }
-        .latest h2 {
-            font-size: 1rem;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 1rem;
-        }
-        .episode {
-            text-align: left;
-            padding: 1.2rem;
-            background: #111;
-            border-radius: 8px;
-        }
-        .episode h3 {
-            color: #f0e6d3;
-            font-size: 1.1rem;
-            margin-bottom: 0.4rem;
-        }
-        .episode p {
-            color: #888;
-            font-size: 0.95rem;
-        }
-        .episode .meta {
-            color: #555;
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-        }
-        .footer {
-            text-align: center;
-            padding: 2rem;
-            color: #333;
-            font-size: 0.85rem;
-        }
     </style>
 </head>
 <body>
@@ -126,27 +87,6 @@
             <a href="https://podcasts.apple.com/us/podcast/tango-nights/id1879420453">Apple Podcasts</a>
             <a href="https://open.spotify.com/show/2MZ9EGC4IME2AKLS4CQVuk">Spotify</a>
         </div>
-        <div class="latest">
-            <h2>Latest Episode</h2>
-            <div class="episode">
-                <h3>S1E1 — First Night Out in a While</h3>
-                <p>I go out to my first milonga in a while.</p>
-                <p class="meta">Feb 22, 2026 · 23 min</p>
-            </div>
-        </div>
     </section>
-    <footer class="footer">
-        &copy; 2026 Tango Nights. All rights reserved.
-    </footer>
 </body>
 </html>
-```
-
-**Steps:**
-1. Go to `https://github.com/davidlampson/davidlampson.github.io`
-2. Click **"Add file"** → **"Create new file"**
-3. Type `index.html` as the filename
-4. Paste the HTML above
-5. Click **"Commit changes"**
-
-Your site will be live at `https://davidlampson.github.io` within a minute or two. After that we'll connect your GoDaddy domain.
