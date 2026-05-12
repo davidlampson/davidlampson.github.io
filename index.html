@@ -1,119 +1,378 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tango Nights — A Podcast by Tango Man</title>
-    <meta name="description" content="Ride along with Tango Man as he navigates the ups and downs of the social tango scene.">
-    <link rel="icon" type="image/png" href="https://artwork.captivate.fm/a170263d-db3f-4810-a16d-2717a23d9b5a/Untitled-design-4.png">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: #0a0a0a;
-            color: #f0e6d3;
-            min-height: 100vh;
-        }
-        .hero {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            text-align: center;
-            padding: 2rem;
-            background: radial-gradient(ellipse at center, #1a0a0a 0%, #0a0a0a 70%);
-        }
-        .artwork {
-            width: 250px;
-            height: 250px;
-            border-radius: 16px;
-            margin-bottom: 2rem;
-            box-shadow: 0 8px 32px rgba(230, 57, 70, 0.3);
-            object-fit: cover;
-        }
-        h1 {
-            font-size: clamp(2rem, 6vw, 4rem);
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            margin-bottom: 0.3rem;
-            color: #e63946;
-        }
-        .subtitle {
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
-            color: #c9a96e;
-            margin-bottom: 1.5rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-        .description {
-            max-width: 550px;
-            font-size: 1.15rem;
-            line-height: 1.7;
-            color: #b0a090;
-            margin-bottom: 2.5rem;
-        }
-        .listen-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-        }
-        .listen-links a {
-            display: inline-block;
-            padding: 0.8rem 1.8rem;
-            border: 2px solid #e63946;
-            color: #e63946;
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-        }
-        .listen-links a:hover {
-            background: #e63946;
-            color: #0a0a0a;
-        }
-        .social-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 2.5rem;
-        }
-        .social-links a {
-            display: inline-block;
-            padding: 0.8rem 1.8rem;
-            border: 2px solid #c9a96e;
-            color: #c9a96e;
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-        }
-        .social-links a:hover {
-            background: #c9a96e;
-            color: #0a0a0a;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tango Nights — A Podcast by Tango Man</title>
+  <meta name="description" content="Ride along with Tango Man as he navigates the ups and downs of the social tango scene.">
+  <link rel="icon" type="image/png" href="https://artwork.captivate.fm/a170263d-db3f-4810-a16d-2717a23d9b5a/Untitled-design-4.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:        #0b0806;
+      --bg2:       #130e0a;
+      --red:       #9b2335;
+      --red-glow:  rgba(155, 35, 53, 0.25);
+      --gold:      #c9a55a;
+      --gold-dim:  rgba(201, 165, 90, 0.15);
+      --text:      #f0e6d3;
+      --text-dim:  #8a7a6a;
+      --rule:      rgba(201, 165, 90, 0.2);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Raleway', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Grain texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 180px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+    }
+
+    /* Ambient glow behind artwork */
+    .glow-orb {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(155,35,53,0.18) 0%, transparent 70%);
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      filter: blur(40px);
+    }
+
+    /* ─── Layout ─── */
+    .page {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 4rem 2rem 6rem;
+    }
+
+    /* ─── Hero ─── */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding-top: 2rem;
+      position: relative;
+    }
+
+    .artwork-wrap {
+      position: relative;
+      margin-bottom: 2.5rem;
+      animation: fadeUp 0.9s ease both;
+    }
+
+    .artwork-wrap::after {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 22px;
+      background: var(--red-glow);
+      filter: blur(20px);
+      z-index: -1;
+    }
+
+    .artwork {
+      width: 200px;
+      height: 200px;
+      border-radius: 16px;
+      object-fit: cover;
+      display: block;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+    }
+
+    .show-label {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+      animation: fadeUp 0.9s 0.1s ease both;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 10vw, 5.5rem);
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+      animation: fadeUp 0.9s 0.15s ease both;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--red);
+    }
+
+    .tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      font-style: italic;
+      font-weight: 300;
+      color: var(--text-dim);
+      max-width: 420px;
+      line-height: 1.6;
+      margin-bottom: 2.5rem;
+      animation: fadeUp 0.9s 0.2s ease both;
+    }
+
+    /* ─── Listen buttons ─── */
+    .listen-group {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 1rem;
+      animation: fadeUp 0.9s 0.3s ease both;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.6rem;
+      border-radius: 3px;
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--red);
+      color: var(--text);
+      border: 2px solid var(--red);
+    }
+    .btn-primary:hover {
+      background: transparent;
+      color: var(--red);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--gold);
+      border: 2px solid var(--rule);
+    }
+    .btn-outline:hover {
+      border-color: var(--gold);
+      background: var(--gold-dim);
+    }
+
+    /* ─── Divider ─── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 3rem 0;
+      animation: fadeUp 0.9s 0.35s ease both;
+    }
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--rule);
+    }
+    .divider-mark {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      color: var(--gold);
+      opacity: 0.6;
+      letter-spacing: 0.2em;
+    }
+
+    /* ─── Player ─── */
+    .player-section {
+      animation: fadeUp 0.9s 0.4s ease both;
+    }
+
+    .section-title {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.25rem;
+      text-align: left;
+    }
+
+    .spotify-wrap {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+
+    /* ─── Social ─── */
+    .social-section {
+      animation: fadeUp 0.9s 0.5s ease both;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .social-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1.1rem;
+      border: 1px solid var(--rule);
+      border-radius: 3px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      transition: all 0.2s ease;
+    }
+    .social-link:hover {
+      color: var(--text);
+      border-color: var(--text-dim);
+      background: rgba(255,255,255,0.04);
+    }
+
+    /* ─── Footer ─── */
+    .footer {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--rule);
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 0.05em;
+      animation: fadeUp 0.9s 0.55s ease both;
+    }
+
+    /* ─── Animations ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── Mobile ─── */
+    @media (max-width: 480px) {
+      .page { padding: 2.5rem 1.25rem 4rem; }
+      .artwork { width: 160px; height: 160px; }
+      .listen-group { gap: 0.5rem; }
+      .btn { padding: 0.65rem 1.2rem; font-size: 0.75rem; }
+    }
+  </style>
 </head>
 <body>
-    <section class="hero">
-        <img class="artwork" src="https://artwork.captivate.fm/a170263d-db3f-4810-a16d-2717a23d9b5a/Untitled-design-4.png" alt="Tango Nights Podcast Artwork">
-        <h1>Tango Nights</h1>
-        <p class="subtitle">A Podcast by Tango Man</p>
-        <p class="description">Ride along with Tango Man as he navigates the ups and downs of the social tango scene.</p>
-        <div class="listen-links">
-            <a href="https://podcasts.apple.com/us/podcast/tango-nights/id1879420453">Apple Podcasts</a>
-            <a href="https://open.spotify.com/show/2MZ9EGC4IME2AKLS4CQVuk">Spotify</a>
-        </div>
-        <div class="social-links">
-            <a href="https://www.instagram.com/tango.nights">📸 Instagram</a>
-            <a href="https://www.tiktok.com/@tango.nights">🎵 TikTok</a>
-            <a href="mailto:tangoman@tangonights.com">📧 Email</a>
-        </div>
-    </section>
+
+<div class="page">
+  <div class="glow-orb"></div>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="artwork-wrap">
+      <img class="artwork"
+           src="https://artwork.captivate.fm/a170263d-db3f-4810-a16d-2717a23d9b5a/Untitled-design-4.png"
+           alt="Tango Nights Podcast Artwork">
+    </div>
+
+    <p class="show-label">A Podcast by Tango Man</p>
+    <h1>Tango <em>Nights</em></h1>
+    <p class="tagline">Ride along with Tango Man as he navigates the ups and downs of the social tango scene.</p>
+
+    <div class="listen-group">
+      <a class="btn btn-primary" href="https://podcasts.apple.com/us/podcast/tango-nights/id1879420453">
+        &#9654; Apple Podcasts
+      </a>
+      <a class="btn btn-outline" href="https://open.spotify.com/show/2MZ9EGC4IME2AKLS4CQVuk">
+        Spotify
+      </a>
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="divider">
+    <span class="divider-mark">&#10022;</span>
+  </div>
+
+  <!-- Player -->
+  <section class="player-section">
+    <p class="section-title">Latest Episodes</p>
+    <div class="spotify-wrap">
+      <iframe
+        style="border-radius:12px"
+        src="https://open.spotify.com/embed/show/2MZ9EGC4IME2AKLS4CQVuk?utm_source=generator&theme=0"
+        width="100%"
+        height="352"
+        frameborder="0"
+        allowfullscreen
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        loading="lazy">
+      </iframe>
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="divider">
+    <span class="divider-mark">&#10022;</span>
+  </div>
+
+  <!-- Social -->
+  <section class="social-section">
+    <p class="section-title">Follow Along</p>
+    <div class="social-links">
+      <a class="social-link" href="https://www.instagram.com/tango.nights">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        Instagram
+      </a>
+      <a class="social-link" href="https://www.tiktok.com/@tango.nights">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/></svg>
+        TikTok
+      </a>
+      <a class="social-link" href="mailto:tangoman@tangonights.com">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        Email
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    &copy; 2025 Tango Nights &nbsp;·&nbsp; All rights reserved
+  </footer>
+
+</div>
+
 </body>
 </html>
