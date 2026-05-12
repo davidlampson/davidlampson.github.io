@@ -3,12 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tango Nights — A Podcast by Tango Man</title>
+  <meta name="theme-color" content="#0b0806">
+  <link rel="canonical" href="https://tangonights.com/">
+
+  <!-- Page meta -->
+  <title>Tango Nights — A Podcast About the Social Tango Scene</title>
+  <meta name="description" content="Ride along as I try to navigate the ups and downs of the social tango scene. New episodes on Apple Podcasts and Spotify.">
+
+  <!-- Open Graph (Facebook, Instagram, iMessage, etc.) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Tango Nights">
+  <meta property="og:description" content="Ride along as I try to navigate the ups and downs of the social tango scene.">
+  <meta property="og:url" content="https://tangonights.com">
+  <meta property="og:image" content="https://artwork.captivate.fm/a170263d-db3f-4810-a16d-2717a23d9b5a/Untitled-design-4.png">
+  <meta property="og:image:width" content="1400">
+  <meta property="og:image:height" content="1400">
+  <meta property="og:site_name" content="Tango Nights">
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Tango Nights">
+  <meta name="twitter:description" content="Ride along as I try to navigate the ups and downs of the social tango scene.">
+  <meta name="twitter:image" content="https://artwork.captivate.fm/a170263d-db3f-4810-a16d-2717a23d9b5a/Untitled-design-4.png">
 
   <link rel="icon" type="image/png" href="https://artwork.captivate.fm/a170263d-db3f-4810-a16d-2717a23d9b5a/Untitled-design-4.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1628858504991709');
+    fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+         src="https://www.facebook.com/tr?id=1628858504991709&ev=PageView&noscript=1"
+         alt="">
+  </noscript>
+  <!-- End Meta Pixel Code -->
 
   <style>
     :root {
@@ -45,7 +86,7 @@
       background-size: 180px;
       pointer-events: none;
       z-index: 0;
-      opacity: 0.5;
+      opacity: 0.6;
     }
 
     /* Ambient glow behind artwork */
@@ -106,17 +147,6 @@
       box-shadow: 0 16px 48px rgba(0,0,0,0.6);
     }
 
-    .show-label {
-      font-family: 'Raleway', sans-serif;
-      font-size: 0.65rem;
-      font-weight: 600;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 0.75rem;
-      animation: fadeUp 0.9s 0.1s ease both;
-    }
-
     h1 {
       font-family: 'Cormorant Garamond', serif;
       font-size: clamp(3rem, 10vw, 5.5rem);
@@ -141,18 +171,45 @@
       color: var(--text-dim);
       max-width: 420px;
       line-height: 1.6;
-      margin-bottom: 2.5rem;
+      margin-bottom: 0;
       animation: fadeUp 0.9s 0.2s ease both;
     }
 
-    /* ─── Listen buttons ─── */
+    /* ─── Section labels ─── */
+    .section-title {
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.25rem;
+    }
+    .section-title--left { text-align: left; }
+    .section-title--center { text-align: center; }
+
+    /* ─── Player ─── */
+    .player-section {
+      animation: fadeUp 0.9s 0.3s ease both;
+    }
+
+    .spotify-wrap {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+
+    /* ─── Subscribe buttons ─── */
+    .subscribe-section {
+      animation: fadeUp 0.9s 0.4s ease both;
+      text-align: center;
+    }
+
     .listen-group {
       display: flex;
       gap: 0.75rem;
       flex-wrap: wrap;
       justify-content: center;
-      margin-bottom: 1rem;
-      animation: fadeUp 0.9s 0.3s ease both;
     }
 
     .btn {
@@ -197,7 +254,6 @@
       align-items: center;
       gap: 1rem;
       margin: 3rem 0;
-      animation: fadeUp 0.9s 0.35s ease both;
     }
     .divider::before,
     .divider::after {
@@ -212,28 +268,6 @@
       color: var(--gold);
       opacity: 0.6;
       letter-spacing: 0.2em;
-    }
-
-    /* ─── Player ─── */
-    .player-section {
-      animation: fadeUp 0.9s 0.4s ease both;
-    }
-
-    .section-title {
-      font-family: 'Raleway', sans-serif;
-      font-size: 0.65rem;
-      font-weight: 600;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 1.25rem;
-      text-align: left;
-    }
-
-    .spotify-wrap {
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     }
 
     /* ─── Social ─── */
@@ -285,6 +319,15 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
+    /* Respect users who prefer reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
     /* ─── Mobile ─── */
     @media (max-width: 480px) {
       .page { padding: 2.5rem 1.25rem 4rem; }
@@ -309,25 +352,14 @@
 
     <h1>Tango <em>Nights</em></h1>
     <p class="tagline">Ride along as I try to navigate the ups and downs of the social tango scene.</p>
-
-    <div class="listen-group">
-      <a class="btn btn-primary" href="https://podcasts.apple.com/us/podcast/tango-nights/id1879420453">
-        &#9654; Apple Podcasts
-      </a>
-      <a class="btn btn-outline" href="https://open.spotify.com/show/2MZ9EGC4IME2AKLS4CQVuk">
-        Spotify
-      </a>
-    </div>
   </section>
 
   <!-- Divider -->
-  <div class="divider">
-    <span class="divider-mark">&#10022;</span>
-  </div>
+  <div class="divider"><span class="divider-mark">&#10022;</span></div>
 
   <!-- Player -->
   <section class="player-section">
-    <p class="section-title">Latest Episodes</p>
+    <p class="section-title section-title--left">Latest Episodes</p>
     <div class="spotify-wrap">
       <iframe
         style="border-radius:12px"
@@ -337,30 +369,48 @@
         frameborder="0"
         allowfullscreen
         allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-        loading="lazy">
+        loading="lazy"
+        title="Tango Nights on Spotify">
       </iframe>
     </div>
   </section>
 
   <!-- Divider -->
-  <div class="divider">
-    <span class="divider-mark">&#10022;</span>
-  </div>
+  <div class="divider"><span class="divider-mark">&#10022;</span></div>
+
+  <!-- Subscribe -->
+  <section class="subscribe-section">
+    <p class="section-title section-title--center">Subscribe On</p>
+    <div class="listen-group">
+      <a class="btn btn-primary" href="https://podcasts.apple.com/us/podcast/tango-nights/id1879420453" data-platform="Apple Podcasts">
+        &#9654; Apple Podcasts
+      </a>
+      <a class="btn btn-outline" href="https://open.spotify.com/show/2MZ9EGC4IME2AKLS4CQVuk" data-platform="Spotify">
+        Spotify
+      </a>
+      <a class="btn btn-outline" href="https://pod.link/1879420453" data-platform="All Platforms">
+        All Platforms
+      </a>
+    </div>
+  </section>
+
+  <!-- Divider -->
+  <div class="divider"><span class="divider-mark">&#10022;</span></div>
 
   <!-- Social -->
   <section class="social-section">
-    <p class="section-title">Follow Along</p>
+    <p class="section-title section-title--left">Follow Along</p>
     <div class="social-links">
-      <a class="social-link" href="https://www.instagram.com/tango.nights">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      <a class="social-link" href="https://www.instagram.com/tango.nights" data-platform="Instagram">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
         Instagram
       </a>
-      <a class="social-link" href="https://www.tiktok.com/@tango.nights">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/></svg>
+      <a class="social-link" href="https://www.tiktok.com/@tango.nights" data-platform="TikTok">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/></svg>
         TikTok
       </a>
-      <a class="social-link" href="mailto:tangoman@tangonights.com">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      <a class="social-link" href="mailto:tangoman@tangonights.com" data-platform="Email">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
         Email
       </a>
     </div>
@@ -368,10 +418,21 @@
 
   <!-- Footer -->
   <footer class="footer">
-    &copy; 2025 Tango Nights &nbsp;·&nbsp; All rights reserved
+    &copy; 2026 Tango Nights &nbsp;·&nbsp; All rights reserved
   </footer>
 
 </div>
+
+<!-- Conversion tracking: fire a Meta Pixel Lead event when someone clicks a subscribe / social link -->
+<script>
+  document.querySelectorAll('.listen-group a, .social-link').forEach(function(el) {
+    el.addEventListener('click', function() {
+      if (typeof fbq !== 'undefined') {
+        fbq('track', 'Lead', { content_name: el.getAttribute('data-platform') });
+      }
+    });
+  });
+</script>
 
 </body>
 </html>
