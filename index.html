@@ -193,10 +193,77 @@
       animation: fadeUp 0.9s 0.3s ease both;
     }
 
-    .spotify-wrap {
-      border-radius: 12px;
+    .episodes-list {
+      border-top: 1px solid var(--rule);
+    }
+
+    .episode-row {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      padding: 1.1rem 0.5rem;
+      border-bottom: 1px solid var(--rule);
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.2s ease;
+    }
+    .episode-row:hover {
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .episode-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-style: italic;
+      color: var(--gold);
+      min-width: 1.5rem;
+      text-align: center;
+      opacity: 0.7;
+    }
+
+    .episode-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .episode-title {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+      line-height: 1.35;
       overflow: hidden;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    .episode-meta {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .episode-play {
+      color: var(--red);
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      opacity: 0.6;
+      transition: opacity 0.2s ease;
+    }
+    .episode-row:hover .episode-play {
+      opacity: 1;
+    }
+
+    .episodes-status {
+      text-align: center;
+      padding: 2.5rem 1rem;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
     }
 
     /* ─── Subscribe buttons ─── */
@@ -362,18 +429,8 @@
   <!-- Player -->
   <section class="player-section">
     <p class="section-title section-title--center">Latest Episodes</p>
-    <div class="spotify-wrap">
-      <iframe
-        style="border-radius:12px"
-        src="https://open.spotify.com/embed/show/2MZ9EGC4IME2AKLS4CQVuk?utm_source=generator&theme=0"
-        width="100%"
-        height="352"
-        frameborder="0"
-        allowfullscreen
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-        loading="lazy"
-        title="Tango Nights on Spotify">
-      </iframe>
+    <div id="episodes-list" class="episodes-list">
+      <div class="episodes-status">Loading episodes…</div>
     </div>
   </section>
 
@@ -425,14 +482,56 @@
 
 </div>
 
-<!-- Conversion tracking: fire a Meta Pixel Lead event when someone clicks a subscribe / social link -->
+<!-- Fetch latest episodes from Apple Podcasts -->
 <script>
-  document.querySelectorAll('.listen-group a, .social-link').forEach(function(el) {
-    el.addEventListener('click', function() {
-      if (typeof fbq !== 'undefined') {
-        fbq('track', 'Lead', { content_name: el.getAttribute('data-platform') });
-      }
-    });
+  (function() {
+    var APPLE_ID = '1879420453';
+    var url = 'https://itunes.apple.com/lookup?id=' + APPLE_ID + '&media=podcast&entity=podcastEpisode&limit=4';
+    var list = document.getElementById('episodes-list');
+
+    fetch(url)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var episodes = (data.results || []).filter(function(r) {
+          return r.kind === 'podcast-episode' || r.wrapperType === 'podcastEpisode';
+        }).slice(0, 3);
+
+        if (!episodes.length) {
+          list.innerHTML = '<div class="episodes-status">New episodes coming soon.</div>';
+          return;
+        }
+
+        list.innerHTML = episodes.map(function(ep, i) {
+          var d = new Date(ep.releaseDate);
+          var date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+          var mins = ep.trackTimeMillis ? Math.round(ep.trackTimeMillis / 60000) + ' min' : '';
+          var meta = mins ? (date + ' &nbsp;·&nbsp; ' + mins) : date;
+          var num = String(i + 1).padStart(2, '0');
+          var safeTitle = (ep.trackName || 'Episode').replace(/</g, '&lt;');
+          return '<a class="episode-row" href="' + ep.trackViewUrl + '" data-platform="Episode: ' + safeTitle + '">' +
+                   '<span class="episode-number">' + num + '</span>' +
+                   '<div class="episode-info">' +
+                     '<div class="episode-title">' + safeTitle + '</div>' +
+                     '<div class="episode-meta">' + meta + '</div>' +
+                   '</div>' +
+                   '<span class="episode-play">&#9654;</span>' +
+                 '</a>';
+        }).join('');
+      })
+      .catch(function() {
+        list.innerHTML = '<div class="episodes-status">Find the latest episodes on Apple Podcasts or Spotify below.</div>';
+      });
+  })();
+</script>
+
+<!-- Conversion tracking: fire a Meta Pixel Lead event for any tracked click (uses event delegation so dynamically-added episode rows are included) -->
+<script>
+  document.addEventListener('click', function(e) {
+    var link = e.target.closest('[data-platform]');
+    if (!link) return;
+    if (typeof fbq !== 'undefined') {
+      fbq('track', 'Lead', { content_name: link.getAttribute('data-platform') });
+    }
   });
 </script>
 
