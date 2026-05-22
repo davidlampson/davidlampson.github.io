@@ -513,7 +513,7 @@
 
   <!-- Player -->
   <section class="player-section">
-    <p class="section-title section-title--center">Latest Episodes</p>
+    <p class="section-title section-title--center">All Episodes</p>
     <div id="episodes-list" class="episodes-list">
       <div class="episodes-status">Loading episodes…</div>
     </div>
@@ -574,11 +574,11 @@
 
 </div>
 
-<!-- Fetch latest episodes from Apple Podcasts and render expandable list with audio player -->
+<!-- Fetch all episodes from Apple Podcasts, render oldest-first, autoplay the first one -->
 <script>
   (function() {
     var APPLE_ID = '1879420453';
-    var url = 'https://itunes.apple.com/lookup?id=' + APPLE_ID + '&media=podcast&entity=podcastEpisode&limit=4';
+    var url = 'https://itunes.apple.com/lookup?id=' + APPLE_ID + '&media=podcast&entity=podcastEpisode&limit=200';
     var list = document.getElementById('episodes-list');
 
     function formatTime(sec) {
@@ -615,7 +615,6 @@
       info.appendChild(el('div', 'episode-title', title));
 
       var metaEl = el('div', 'episode-meta');
-      // Build meta with a styled middle dot rather than HTML entity injection
       metaEl.textContent = mins ? (date + '  ·  ' + mins) : date;
       info.appendChild(metaEl);
       header.appendChild(info);
@@ -646,7 +645,8 @@
         player.appendChild(el('span', 'audio-time', '0:00 / 0:00'));
 
         var audio = document.createElement('audio');
-        audio.preload = 'none';
+        // First episode needs metadata loaded eagerly so autoplay has something to play
+        audio.preload = i === 0 ? 'auto' : 'none';
         audio.src = ep.episodeUrl;
         player.appendChild(audio);
 
@@ -663,7 +663,12 @@
       .then(function(data) {
         var episodes = (data.results || []).filter(function(r) {
           return r.kind === 'podcast-episode' || r.wrapperType === 'podcastEpisode';
-        }).slice(0, 3);
+        });
+
+        // Sort oldest-first (chronological) so Episode 01 is the very first
+        episodes.sort(function(a, b) {
+          return new Date(a.releaseDate) - new Date(b.releaseDate);
+        });
 
         if (!episodes.length) {
           list.textContent = '';
@@ -746,6 +751,30 @@
             audio.currentTime = pct * audio.duration;
           });
         });
+
+        // ── Auto-open & auto-play the first (oldest) episode ──
+        var firstRow = list.querySelector('.episode-row');
+        if (firstRow) {
+          firstRow.classList.add('open');
+          var firstAudio = firstRow.querySelector('audio');
+          if (firstAudio) {
+            var attempt = firstAudio.play();
+            if (attempt && typeof attempt.catch === 'function') {
+              attempt.catch(function() {
+                // Browser blocked autoplay — start the moment the user interacts with the page
+                var startOnInteract = function() {
+                  firstAudio.play().catch(function() {});
+                  ['click', 'touchstart', 'keydown'].forEach(function(evt) {
+                    document.removeEventListener(evt, startOnInteract, true);
+                  });
+                };
+                ['click', 'touchstart', 'keydown'].forEach(function(evt) {
+                  document.addEventListener(evt, startOnInteract, true);
+                });
+              });
+            }
+          }
+        }
       })
       .catch(function() {
         list.textContent = '';
