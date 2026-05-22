@@ -645,7 +645,7 @@
         player.appendChild(el('span', 'audio-time', '0:00 / 0:00'));
 
         var audio = document.createElement('audio');
-        // First episode needs metadata loaded eagerly so autoplay has something to play
+        // First episode preloads audio so autoplay starts without a buffering pause
         audio.preload = i === 0 ? 'auto' : 'none';
         audio.src = ep.episodeUrl;
         player.appendChild(audio);
