@@ -6,9 +6,11 @@
   <meta name="theme-color" content="#0b0806">
   <link rel="canonical" href="https://tangonights.com/">
 
+  <!-- Page meta -->
   <title>Tango Nights — A Podcast About the Social Tango Scene</title>
-  <meta name="description" content="Ride along as I try to navigate the ups and downs of the social tango scene. New episodes on Apple Podcasts and Spotify.">
+  <meta name="description" content="Ride along as I try to navigate the ups and downs of the social tango scene. New episodes on Apple Podcasts, Spotify, Substack, and YouTube.">
 
+  <!-- Open Graph (Facebook, Instagram, iMessage, etc.) -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="Tango Nights">
   <meta property="og:description" content="Ride along as I try to navigate the ups and downs of the social tango scene.">
@@ -18,6 +20,7 @@
   <meta property="og:image:height" content="1400">
   <meta property="og:site_name" content="Tango Nights">
 
+  <!-- Twitter / X -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Tango Nights">
   <meta name="twitter:description" content="Ride along as I try to navigate the ups and downs of the social tango scene.">
@@ -73,6 +76,7 @@
       overflow-x: hidden;
     }
 
+    /* Grain texture overlay */
     body::before {
       content: '';
       position: fixed;
@@ -85,6 +89,7 @@
       opacity: 0.6;
     }
 
+    /* Ambient glow behind artwork */
     .glow-orb {
       position: absolute;
       width: 500px;
@@ -98,6 +103,7 @@
       filter: blur(40px);
     }
 
+    /* ─── Layout ─── */
     .page {
       position: relative;
       z-index: 1;
@@ -106,6 +112,7 @@
       padding: 4rem 2rem 6rem;
     }
 
+    /* ─── Hero ─── */
     .hero {
       display: flex;
       flex-direction: column;
@@ -168,6 +175,7 @@
       animation: fadeUp 0.9s 0.2s ease both;
     }
 
+    /* ─── Section labels ─── */
     .section-title {
       font-family: 'Raleway', sans-serif;
       font-size: 0.65rem;
@@ -177,12 +185,21 @@
       color: var(--gold);
       margin-bottom: 1.25rem;
     }
+    .section-title--left { text-align: left; }
     .section-title--center { text-align: center; }
 
-    .player-section { animation: fadeUp 0.9s 0.3s ease both; }
+    /* ─── Player ─── */
+    .player-section {
+      animation: fadeUp 0.9s 0.3s ease both;
+    }
 
-    .episodes-list { border-top: 1px solid var(--rule); }
-    .episode-row { border-bottom: 1px solid var(--rule); }
+    .episodes-list {
+      border-top: 1px solid var(--rule);
+    }
+
+    .episode-row {
+      border-bottom: 1px solid var(--rule);
+    }
 
     .episode-header {
       display: flex;
@@ -193,7 +210,9 @@
       transition: background 0.2s ease;
       text-align: left;
     }
-    .episode-header:hover { background: rgba(255, 255, 255, 0.025); }
+    .episode-header:hover {
+      background: rgba(255, 255, 255, 0.025);
+    }
 
     .episode-number {
       font-family: 'Cormorant Garamond', serif;
@@ -205,7 +224,10 @@
       opacity: 0.7;
     }
 
-    .episode-info { flex: 1; min-width: 0; }
+    .episode-info {
+      flex: 1;
+      min-width: 0;
+    }
 
     .episode-title {
       font-size: 0.95rem;
@@ -242,7 +264,9 @@
       overflow: hidden;
       transition: max-height 0.4s ease;
     }
-    .episode-row.open .episode-expand { max-height: 600px; }
+    .episode-row.open .episode-expand {
+      max-height: 600px;
+    }
 
     .episode-expand-inner {
       padding: 0 0.5rem 1.5rem 3.25rem;
@@ -258,7 +282,7 @@
       text-align: left;
     }
 
-    /* Custom audio player */
+    /* ─── Custom audio player ─── */
     .audio-player {
       display: flex;
       align-items: center;
@@ -327,6 +351,7 @@
       font-style: italic;
     }
 
+    /* ─── Subscribe buttons ─── */
     .subscribe-section {
       animation: fadeUp 0.9s 0.4s ease both;
       text-align: center;
@@ -375,6 +400,7 @@
       background: var(--gold-dim);
     }
 
+    /* ─── Divider ─── */
     .divider {
       display: flex;
       align-items: center;
@@ -396,6 +422,7 @@
       letter-spacing: 0.2em;
     }
 
+    /* ─── Social ─── */
     .social-section {
       animation: fadeUp 0.9s 0.5s ease both;
       text-align: center;
@@ -428,6 +455,7 @@
       background: rgba(255,255,255,0.04);
     }
 
+    /* ─── Footer ─── */
     .footer {
       margin-top: 4rem;
       padding-top: 2rem;
@@ -439,11 +467,13 @@
       animation: fadeUp 0.9s 0.55s ease both;
     }
 
+    /* ─── Animations ─── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(18px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
+    /* Respect users who prefer reduced motion */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
@@ -452,6 +482,7 @@
       }
     }
 
+    /* ─── Mobile ─── */
     @media (max-width: 480px) {
       .page { padding: 2.5rem 1.25rem 4rem; }
       .artwork { width: 220px; height: 220px; }
@@ -465,16 +496,22 @@
 <div class="page">
   <div class="glow-orb"></div>
 
+  <!-- Hero -->
   <section class="hero">
     <div class="artwork-wrap">
-      <img class="artwork" src="cover.png" alt="Tango Nights Podcast Artwork">
+      <img class="artwork"
+           src="cover.png"
+           alt="Tango Nights Podcast Artwork">
     </div>
+
     <h1>Tango <em>Nights</em></h1>
     <p class="tagline">Ride along as I try to navigate the ups and downs of the social tango scene.</p>
   </section>
 
+  <!-- Divider -->
   <div class="divider"><span class="divider-mark">&#10022;</span></div>
 
+  <!-- Player -->
   <section class="player-section">
     <p class="section-title section-title--center">All Episodes</p>
     <div id="episodes-list" class="episodes-list">
@@ -482,8 +519,10 @@
     </div>
   </section>
 
+  <!-- Divider -->
   <div class="divider"><span class="divider-mark">&#10022;</span></div>
 
+  <!-- Subscribe -->
   <section class="subscribe-section">
     <p class="section-title section-title--center">Subscribe On</p>
     <div class="listen-group">
@@ -506,8 +545,10 @@
     </div>
   </section>
 
+  <!-- Divider -->
   <div class="divider"><span class="divider-mark">&#10022;</span></div>
 
+  <!-- Social -->
   <section class="social-section">
     <p class="section-title section-title--center">Follow Along</p>
     <div class="social-links">
@@ -530,17 +571,18 @@
     </div>
   </section>
 
+  <!-- Footer -->
   <footer class="footer">
     &copy; 2026 Tango Nights &nbsp;·&nbsp; All rights reserved
   </footer>
 
 </div>
 
-<!-- Fetch all episodes from Apple Podcasts, render oldest-first, auto-play the first one -->
+<!-- Fetch all episodes from Apple Podcasts and render oldest-first. Audio plays only when the visitor clicks play. -->
 <script>
   (function() {
     var APPLE_ID = '1879420453';
-    var url = 'https://itunes.apple.com/lookup?id=' + APPLE_ID + '&media=podcast&entity=podcastEpisode&limit=50';
+    var url = 'https://itunes.apple.com/lookup?id=' + APPLE_ID + '&media=podcast&entity=podcastEpisode&limit=200';
     var list = document.getElementById('episodes-list');
 
     function formatTime(sec) {
@@ -607,8 +649,8 @@
         player.appendChild(el('span', 'audio-time', '0:00 / 0:00'));
 
         var audio = document.createElement('audio');
-        // First episode preloads its metadata so the duration shows immediately
-        audio.preload = i === 0 ? 'metadata' : 'none';
+        // First episode preloads audio so autoplay starts without a buffering pause
+        audio.preload = i === 0 ? 'auto' : 'none';
         audio.src = ep.episodeUrl;
         player.appendChild(audio);
 
@@ -627,7 +669,7 @@
           return r.kind === 'podcast-episode' || r.wrapperType === 'podcastEpisode';
         });
 
-        // Sort oldest-first so Episode 01 is the very first
+        // Sort oldest-first (chronological) so Episode 01 is the very first
         episodes.sort(function(a, b) {
           return new Date(a.releaseDate) - new Date(b.releaseDate);
         });
@@ -643,7 +685,7 @@
           list.appendChild(buildEpisode(ep, i));
         });
 
-        // Expand/collapse, one open at a time
+        // Expand/collapse rows
         list.querySelectorAll('.episode-header').forEach(function(header) {
           header.addEventListener('click', function() {
             var row = this.parentElement;
@@ -659,13 +701,14 @@
           });
         });
 
-        // Wire up each custom audio player
+        // Custom audio players
         list.querySelectorAll('.audio-player').forEach(function(player) {
           var audio = player.querySelector('audio');
           var btn = player.querySelector('.audio-play');
           var bar = player.querySelector('.audio-progress-bar');
           var progress = player.querySelector('.audio-progress');
           var timeEl = player.querySelector('.audio-time');
+          var fired = false;
 
           btn.addEventListener('click', function() {
             document.querySelectorAll('audio').forEach(function(a) {
@@ -679,6 +722,14 @@
             btn.innerHTML = '&#10074;&#10074;';
             btn.style.paddingLeft = '0';
             btn.setAttribute('aria-label', 'Pause episode');
+            // Track the first play per episode as engagement, not a conversion
+            if (!fired && typeof fbq !== 'undefined') {
+              fbq('track', 'ViewContent', {
+                content_name: player.getAttribute('data-title'),
+                content_category: 'Episode play'
+              });
+              fired = true;
+            }
           });
 
           audio.addEventListener('pause', function() {
@@ -705,19 +756,20 @@
           });
         });
 
-        // Auto-open the first (oldest) episode so its player is visible and ready to play
+        // ── Auto-open the first (oldest) episode, but do not autoplay ──
         var firstRow = list.querySelector('.episode-row');
-        if (firstRow) firstRow.classList.add('open');
+        if (firstRow) {
+          firstRow.classList.add('open');
+        }
       })
-      .catch(function(err) {
-        console.error('Episode fetch failed:', err);
+      .catch(function() {
         list.textContent = '';
-        list.appendChild(el('div', 'episodes-status', 'Find the latest episodes on Apple Podcasts or Spotify below.'));
+        list.appendChild(el('div', 'episodes-status', 'Find the latest episodes on Apple Podcasts, Spotify, Substack, or all platforms below.'));
       });
   })();
 </script>
 
-<!-- Conversion tracking: fire Meta Pixel Subscribe event for any subscribe button click -->
+<!-- Conversion tracking: fire Meta Pixel Subscribe event only for actual subscribe button clicks -->
 <script>
   document.querySelectorAll('.listen-group a[data-platform]').forEach(function(btn) {
     btn.addEventListener('click', function() {
