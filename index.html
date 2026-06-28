@@ -533,9 +533,7 @@
 
   <section class="hero">
     <div class="artwork-wrap">
-      <img class="artwork"
-           src="cover.png"
-           alt="Tango Nights Podcast Artwork">
+      <img class="artwork" src="cover.png" alt="Tango Nights Podcast Artwork">
     </div>
 
     <p class="eyebrow">Podcast</p>
@@ -547,42 +545,8 @@
 
   <section class="player-section">
     <p class="section-title section-title--center">All Episodes</p>
-
     <div id="episodes-list" class="episodes-list">
-
-      <!-- Static Episode 5 fallback.
-           Direct link: https://tangonights.com/#episode-5 -->
-      <div id="episode-5" class="episode-row open" data-manual-episode="last tango on the west side">
-        <div class="episode-header">
-          <span class="episode-number">05</span>
-
-          <div class="episode-info">
-            <div class="episode-title">Last Tango on the West Side</div>
-            <div class="episode-meta">Latest episode</div>
-          </div>
-
-          <span class="episode-toggle">+</span>
-        </div>
-
-        <div class="episode-expand">
-          <div class="episode-expand-inner">
-            <p class="episode-description">
-              Episode 5 of Tango Nights. Listen now on Apple Podcasts, Spotify, Substack, YouTube, or your favorite podcast app.
-            </p>
-
-            <div class="episode-links">
-              <a class="btn btn-primary" href="https://pod.link/1879420453" target="_blank" rel="noopener">
-                Listen to Episode 5
-              </a>
-              <a class="episode-anchor-link" href="#episode-5">
-                Direct Link
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="episodes-status">Loading more episodes…</div>
+      <div class="episodes-status">Loading episodes…</div>
     </div>
   </section>
 
@@ -618,15 +582,9 @@
   <section class="social-section">
     <p class="section-title section-title--center">Connect</p>
     <div class="social-links">
-      <a class="social-link" href="https://www.instagram.com/tango.nights" target="_blank" rel="noopener">
-        Instagram
-      </a>
-      <a class="social-link" href="https://www.tiktok.com/@tango.nights" target="_blank" rel="noopener">
-        TikTok
-      </a>
-      <a class="social-link" href="mailto:tangoman@tangonights.com">
-        Email
-      </a>
+      <a class="social-link" href="https://www.instagram.com/tango.nights" target="_blank" rel="noopener">Instagram</a>
+      <a class="social-link" href="https://www.tiktok.com/@tango.nights" target="_blank" rel="noopener">TikTok</a>
+      <a class="social-link" href="mailto:tangoman@tangonights.com">Email</a>
     </div>
   </section>
 
@@ -638,7 +596,14 @@
 <script>
   (function() {
     var APPLE_ID = '1879420453';
-    var url = 'https://itunes.apple.com/lookup?id=' + APPLE_ID + '&media=podcast&entity=podcastEpisode&limit=200';
+
+    /*
+      This first asks Apple for the podcast's actual RSS feed URL,
+      then reads that RSS feed through a JSON proxy.
+      That should give you the Captivate episode descriptions instead of a manual fallback.
+    */
+    var appleShowLookupUrl = 'https://itunes.apple.com/lookup?id=' + APPLE_ID;
+    var appleEpisodesUrl = 'https://itunes.apple.com/lookup?id=' + APPLE_ID + '&media=podcast&entity=podcastEpisode&limit=200';
     var list = document.getElementById('episodes-list');
 
     function formatTime(sec) {
@@ -655,6 +620,12 @@
       return node;
     }
 
+    function stripHtml(html) {
+      var div = document.createElement('div');
+      div.innerHTML = html || '';
+      return (div.textContent || div.innerText || '').trim();
+    }
+
     function normalizeTitle(title) {
       return String(title || '')
         .toLowerCase()
@@ -663,22 +634,58 @@
         .trim();
     }
 
-    function isManualEpisodeAlreadyShown(ep) {
-      var title = normalizeTitle(ep.trackName || '');
-      return title.indexOf('last tango on the west side') !== -1;
+    function getEpisodeNumber(item, fallbackNumber) {
+      if (item.episodeNumber) return Number(item.episodeNumber);
+      if (item.itunes_episode) return Number(item.itunes_episode);
+      if (item['itunes:episode']) return Number(item['itunes:episode']);
+
+      var title = item.title || item.trackName || '';
+      var match = title.match(/\b(?:episode|ep\.?|e)\s*0?(\d+)\b/i);
+      if (match) return Number(match[1]);
+
+      return fallbackNumber;
     }
 
-    function buildEpisode(ep, episodeNumber) {
-      var d = new Date(ep.releaseDate);
-      var date = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      var mins = ep.trackTimeMillis ? Math.round(ep.trackTimeMillis / 60000) + ' min' : '';
-      var paddedNumber = String(episodeNumber).padStart(2, '0');
-      var title = ep.trackName || 'Episode';
-      var episodeId = 'episode-' + String(episodeNumber);
+    function getDescription(item) {
+      return stripHtml(
+        item.description ||
+        item.content ||
+        item.summary ||
+        item.shortDescription ||
+        item.trackCensoredName ||
+        ''
+      );
+    }
 
-      var rawDesc = ep.description || ep.shortDescription || '';
-      var cleanDesc = rawDesc.replace(/<[^>]+>/g, '').trim();
-      var desc = cleanDesc.length > 320 ? cleanDesc.substring(0, 320).trim() + '…' : cleanDesc;
+    function getAudioUrl(item) {
+      if (item.enclosure && item.enclosure.link) return item.enclosure.link;
+      if (item.enclosure && item.enclosure.url) return item.enclosure.url;
+      if (item.episodeUrl) return item.episodeUrl;
+      return '';
+    }
+
+    function getDate(item) {
+      return item.pubDate || item.isoDate || item.releaseDate || item.date || '';
+    }
+
+    function getDurationText(item) {
+      if (item.itunes_duration) return item.itunes_duration;
+      if (item.duration) return item.duration;
+      if (item.trackTimeMillis) return Math.round(item.trackTimeMillis / 60000) + ' min';
+      return '';
+    }
+
+    function buildEpisode(item, episodeNumber) {
+      var title = item.title || item.trackName || 'Episode';
+      var episodeId = 'episode-' + String(episodeNumber);
+      var paddedNumber = String(episodeNumber).padStart(2, '0');
+      var dateRaw = getDate(item);
+      var date = dateRaw ? new Date(dateRaw).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+      var duration = getDurationText(item);
+      var descRaw = getDescription(item);
+      var desc = descRaw.length > 320 ? descRaw.substring(0, 320).trim() + '…' : descRaw;
+      var audioUrl = getAudioUrl(item);
+      var externalUrl = item.link || item.guid || item.trackViewUrl || 'https://pod.link/1879420453';
 
       var row = el('div', 'episode-row');
       row.id = episodeId;
@@ -690,10 +697,10 @@
       info.appendChild(el('div', 'episode-title', title));
 
       var metaEl = el('div', 'episode-meta');
-      metaEl.textContent = mins ? (date + '  ·  ' + mins) : date;
+      metaEl.textContent = duration ? (date + '  ·  ' + duration) : date;
       info.appendChild(metaEl);
-      header.appendChild(info);
 
+      header.appendChild(info);
       header.appendChild(el('span', 'episode-toggle', '+'));
       row.appendChild(header);
 
@@ -702,7 +709,7 @@
 
       if (desc) inner.appendChild(el('p', 'episode-description', desc));
 
-      if (ep.episodeUrl) {
+      if (audioUrl) {
         var player = el('div', 'audio-player');
         player.setAttribute('data-title', title);
 
@@ -721,7 +728,7 @@
 
         var audio = document.createElement('audio');
         audio.preload = 'none';
-        audio.src = ep.episodeUrl;
+        audio.src = audioUrl;
         player.appendChild(audio);
 
         inner.appendChild(player);
@@ -735,21 +742,54 @@
       direct.textContent = 'Direct Link';
       links.appendChild(direct);
 
-      if (ep.trackViewUrl) {
-        var apple = document.createElement('a');
-        apple.className = 'episode-anchor-link';
-        apple.href = ep.trackViewUrl;
-        apple.target = '_blank';
-        apple.rel = 'noopener';
-        apple.textContent = 'Apple';
-        links.appendChild(apple);
-      }
+      var full = document.createElement('a');
+      full.className = 'episode-anchor-link';
+      full.href = externalUrl;
+      full.target = '_blank';
+      full.rel = 'noopener';
+      full.textContent = 'Episode Page';
+      links.appendChild(full);
 
       inner.appendChild(links);
 
       expand.appendChild(inner);
       row.appendChild(expand);
+
       return row;
+    }
+
+    function renderEpisodes(items) {
+      list.textContent = '';
+
+      items.sort(function(a, b) {
+        return new Date(getDate(b)) - new Date(getDate(a));
+      });
+
+      var numbered = items.map(function(item, index) {
+        var fallbackNumber = items.length - index;
+        return {
+          item: item,
+          number: getEpisodeNumber(item, fallbackNumber)
+        };
+      });
+
+      numbered.sort(function(a, b) {
+        return b.number - a.number;
+      });
+
+      numbered.forEach(function(pair) {
+        list.appendChild(buildEpisode(pair.item, pair.number));
+      });
+
+      activateEpisodeRows();
+      activateAudioPlayers();
+
+      if (window.location.hash) {
+        openEpisodeFromHash();
+      } else {
+        var firstRow = list.querySelector('.episode-row');
+        if (firstRow) firstRow.classList.add('open');
+      }
     }
 
     function activateEpisodeRows() {
@@ -860,50 +900,44 @@
       }, 150);
     }
 
-    activateEpisodeRows();
-    openEpisodeFromHash();
+    function loadFromAppleEpisodesFallback() {
+      return fetch(appleEpisodesUrl)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          var episodes = (data.results || []).filter(function(r) {
+            return r.kind === 'podcast-episode' || r.wrapperType === 'podcastEpisode';
+          });
 
-    fetch(url)
-      .then(function(r) { return r.json(); })
-      .then(function(data) {
-        var episodes = (data.results || []).filter(function(r) {
-          return r.kind === 'podcast-episode' || r.wrapperType === 'podcastEpisode';
+          if (!episodes.length) throw new Error('No Apple episodes found.');
+          renderEpisodes(episodes);
         });
+    }
 
-        episodes = episodes.filter(function(ep) {
-          return !isManualEpisodeAlreadyShown(ep);
+    function loadFromRssViaAppleFeedUrl() {
+      return fetch(appleShowLookupUrl)
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          var show = (data.results || [])[0];
+          if (!show || !show.feedUrl) throw new Error('No RSS feed URL found.');
+
+          var rssJsonUrl = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(show.feedUrl);
+
+          return fetch(rssJsonUrl);
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (!data.items || !data.items.length) throw new Error('No RSS items found.');
+          renderEpisodes(data.items);
         });
+    }
 
-        /* Newest to oldest underneath Episode 5.
-           Since Episode 5 is manually pinned, the Apple-loaded episodes become 4, 3, 2, 1. */
-        episodes.sort(function(a, b) {
-          return new Date(b.releaseDate) - new Date(a.releaseDate);
-        });
-
-        var status = list.querySelector('.episodes-status');
-        if (status) status.remove();
-
-        if (!episodes.length) {
-          list.appendChild(el('div', 'episodes-status', 'More episodes will appear here once Apple updates its episode lookup.'));
-          return;
-        }
-
-        var totalLoadedEpisodes = episodes.length;
-
-        episodes.forEach(function(ep, i) {
-          var episodeNumber = totalLoadedEpisodes - i;
-          list.appendChild(buildEpisode(ep, episodeNumber));
-        });
-
-        activateEpisodeRows();
-        activateAudioPlayers();
-        openEpisodeFromHash();
+    loadFromRssViaAppleFeedUrl()
+      .catch(function() {
+        return loadFromAppleEpisodesFallback();
       })
       .catch(function() {
-        var status = list.querySelector('.episodes-status');
-        if (status) {
-          status.textContent = 'Find more episodes on Apple Podcasts, Spotify, Substack, or all platforms below.';
-        }
+        list.textContent = '';
+        list.appendChild(el('div', 'episodes-status', 'Find the latest episodes on Apple Podcasts, Spotify, Substack, or all platforms below.'));
       });
 
     window.addEventListener('hashchange', openEpisodeFromHash);
