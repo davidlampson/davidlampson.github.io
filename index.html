@@ -179,6 +179,13 @@
       animation: fadeUp 0.9s 0.2s ease both;
     }
 
+    .latest-cta {
+      margin-top: 1.75rem;
+      animation: fadeUp 0.9s 0.25s ease both;
+    }
+
+    .latest-cta[hidden] { display: none; }
+
     .section-title {
       font-family: 'Raleway', sans-serif;
       font-size: 0.65rem;
@@ -308,6 +315,9 @@
       text-transform: uppercase;
       text-decoration: none;
       transition: all 0.2s ease;
+      cursor: pointer;
+      background: transparent;
+      font-family: 'Raleway', sans-serif;
     }
 
     .episode-anchor-link:hover {
@@ -539,6 +549,10 @@
     <p class="eyebrow">Podcast</p>
     <h1>Tango <em>Nights</em></h1>
     <p class="tagline">Ride along as I try to navigate the ups and downs of the social tango scene.</p>
+
+    <a id="latest-cta" class="btn btn-primary latest-cta" href="#" hidden>
+      <span>&#9654;</span>&nbsp;<span id="latest-cta-text">Latest Episode</span>
+    </a>
   </section>
 
   <div class="divider"><span class="divider-mark">&#10022;</span></div>
@@ -671,8 +685,34 @@
     function getDurationText(item) {
       if (item.itunes_duration) return item.itunes_duration;
       if (item.duration) return item.duration;
+      if (item.enclosure && item.enclosure.duration) {
+        var d = Number(item.enclosure.duration);
+        if (d > 0) return formatTime(d);
+      }
       if (item.trackTimeMillis) return Math.round(item.trackTimeMillis / 60000) + ' min';
       return '';
+    }
+
+    /*
+      The feed's per-episode <link> often just points back to the homepage.
+      Only show an "Episode Page" button when we have a real, distinct URL.
+    */
+    function isRealEpisodeUrl(url) {
+      if (!url || !/^https?:\/\//i.test(url)) return false;
+      var cleaned = String(url)
+        .replace(/^https?:\/\/(www\.)?/i, '')
+        .replace(/[\/#?]+$/, '')
+        .toLowerCase();
+      return cleaned !== 'tangonights.com';
+    }
+
+    function ensureMetadata(row) {
+      var audio = row.querySelector('audio');
+      if (audio && audio.dataset.metaRequested !== 'true') {
+        audio.dataset.metaRequested = 'true';
+        audio.preload = 'metadata';
+        audio.load();
+      }
     }
 
     function buildEpisode(item, episodeNumber) {
@@ -685,7 +725,7 @@
       var descRaw = getDescription(item);
       var desc = descRaw.length > 320 ? descRaw.substring(0, 320).trim() + '…' : descRaw;
       var audioUrl = getAudioUrl(item);
-      var externalUrl = item.link || item.guid || item.trackViewUrl || 'https://pod.link/1879420453';
+      var externalUrl = item.link || item.trackViewUrl || '';
 
       var row = el('div', 'episode-row');
       row.id = episodeId;
@@ -742,13 +782,15 @@
       direct.textContent = 'Direct Link';
       links.appendChild(direct);
 
-      var full = document.createElement('a');
-      full.className = 'episode-anchor-link';
-      full.href = externalUrl;
-      full.target = '_blank';
-      full.rel = 'noopener';
-      full.textContent = 'Episode Page';
-      links.appendChild(full);
+      if (isRealEpisodeUrl(externalUrl)) {
+        var full = document.createElement('a');
+        full.className = 'episode-anchor-link';
+        full.href = externalUrl;
+        full.target = '_blank';
+        full.rel = 'noopener';
+        full.textContent = 'Episode Page';
+        links.appendChild(full);
+      }
 
       inner.appendChild(links);
 
@@ -783,13 +825,35 @@
 
       activateEpisodeRows();
       activateAudioPlayers();
+      activateLatestCta(numbered);
 
       if (window.location.hash) {
         openEpisodeFromHash();
       } else {
         var firstRow = list.querySelector('.episode-row');
-        if (firstRow) firstRow.classList.add('open');
+        if (firstRow) {
+          firstRow.classList.add('open');
+          ensureMetadata(firstRow);
+        }
       }
+    }
+
+    function activateLatestCta(numbered) {
+      var cta = document.getElementById('latest-cta');
+      var ctaText = document.getElementById('latest-cta-text');
+      if (!cta || !ctaText || !numbered.length) return;
+
+      var latest = numbered[0];
+      var latestTitle = latest.item.title || latest.item.trackName || 'Latest Episode';
+      if (latestTitle.length > 48) latestTitle = latestTitle.slice(0, 45).trim() + '…';
+
+      ctaText.textContent = 'Latest: ' + latestTitle;
+      cta.href = '#episode-' + latest.number;
+      cta.hidden = false;
+
+      cta.addEventListener('click', function() {
+        setTimeout(openEpisodeFromHash, 0);
+      });
     }
 
     function activateEpisodeRows() {
@@ -811,8 +875,9 @@
 
           row.classList.toggle('open', !wasOpen);
 
-          if (!wasOpen && row.id) {
-            history.replaceState(null, '', '#' + row.id);
+          if (!wasOpen) {
+            ensureMetadata(row);
+            if (row.id) history.replaceState(null, '', '#' + row.id);
           }
         });
       });
@@ -865,7 +930,9 @@
         });
 
         audio.addEventListener('loadedmetadata', function() {
-          timeEl.textContent = '0:00 / ' + formatTime(audio.duration);
+          if (audio.paused) {
+            timeEl.textContent = '0:00 / ' + formatTime(audio.duration);
+          }
         });
 
         progress.addEventListener('click', function(e) {
@@ -894,6 +961,7 @@
       });
 
       target.classList.add('open');
+      ensureMetadata(target);
 
       setTimeout(function() {
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
